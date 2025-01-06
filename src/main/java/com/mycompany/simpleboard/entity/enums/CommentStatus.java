@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum BoardStatus implements Status {
+public enum CommentStatus implements Status{
     CREATED("등록"),
     DELETED("삭제"),
     MODIFIED("수정")

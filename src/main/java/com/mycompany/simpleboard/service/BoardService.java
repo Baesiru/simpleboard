@@ -62,6 +62,7 @@ public class BoardService {
         board.setTitle(boardRequest.getTitle());
         board.setContent(boardRequest.getContent());
         board.setStatus(BoardStatus.MODIFIED);
+        board.setModifiedAt(LocalDateTime.now());
         boardRepository.save(board);
     }
 
@@ -76,6 +77,7 @@ public class BoardService {
             throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
         }
         board.setStatus(BoardStatus.DELETED);
+        board.setDeletedAt(LocalDateTime.now());
         boardRepository.save(board);
     }
 
