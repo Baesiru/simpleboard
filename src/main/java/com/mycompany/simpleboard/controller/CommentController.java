@@ -30,4 +30,17 @@ public class CommentController {
         List<CommentResponse> comments = commentService.getComments(boardId);
         return ResponseEntity.ok().body(comments);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> modifyComment(@PathVariable Long id, @RequestBody CommentRequest commentRequest,
+                                                HttpSession httpSession) {
+        commentService.modifyComment(id, commentRequest, httpSession);
+        return ResponseEntity.ok().body("댓글이 수정되었습니다.");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteComment(@PathVariable Long id, HttpSession httpSession) {
+        commentService.deleteComment(id, httpSession);
+        return ResponseEntity.ok().body("댓글이 삭제되었습니다.");
+    }
 }
