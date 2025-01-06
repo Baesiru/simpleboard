@@ -12,4 +12,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByTitleContainsAndStatusNot(String title, BoardStatus status, Pageable pageable);
     Page<Board> findByContentContainsAndStatusNot(String content, BoardStatus status, Pageable pageable);
     Page<Board> findByUsernameContainsAndStatusNot(String username, BoardStatus status, Pageable pageable);
+    boolean existsByIdAndStatusNot(Long id, BoardStatus status);
 }
