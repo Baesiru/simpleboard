@@ -36,7 +36,7 @@ public class CommentService {
         Comment comment = new Comment();
 
         //Comment comment = modelMapper.map(commentRequest, Comment.class);
-        String username = httpSession.getAttribute("username").toString();
+        String username = getUsername(httpSession);
         comment.setContent(commentRequest.getContent());
         comment.setCreatedAt(LocalDateTime.now());
         comment.setStatus(CommentStatus.CREATED);
@@ -65,10 +65,7 @@ public class CommentService {
     @Transactional
     public void modifyComment(Long id, CommentRequest commentRequest, HttpSession httpSession) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND));
-        String username = httpSession.getAttribute("username").toString();
-        if (!comment.getUsername().equals(username)) {
-            throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
-        }
+        checkUsername(httpSession, comment);
         comment.setContent(commentRequest.getContent());
         comment.setStatus(CommentStatus.MODIFIED);
         comment.setModifiedAt(LocalDateTime.now());
@@ -78,12 +75,20 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long id, HttpSession httpSession) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND));
-        String username = httpSession.getAttribute("username").toString();
-        if (!comment.getUsername().equals(username)) {
-            throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
-        }
+        checkUsername(httpSession, comment);
         comment.setStatus(CommentStatus.DELETED);
         comment.setDeletedAt(LocalDateTime.now());
         commentRepository.save(comment);
+    }
+
+    public String getUsername(HttpSession httpSession) {
+        return httpSession.getAttribute("username").toString();
+    }
+
+    public void checkUsername(HttpSession httpSession, Comment comment) {
+        String username = getUsername(httpSession);
+        if (!username.equals(comment.getUsername())) {
+            throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
+        }
     }
 }
