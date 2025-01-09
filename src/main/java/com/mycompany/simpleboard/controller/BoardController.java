@@ -6,6 +6,7 @@ import com.mycompany.simpleboard.dto.board.BoardResponse;
 import com.mycompany.simpleboard.dto.board.PageResponse;
 import com.mycompany.simpleboard.service.BoardService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class BoardController {
 
     @PostMapping()
     @Auth
-    public ResponseEntity<Object> createBoard(@RequestPart("board") BoardRequest boardRequest,
+    public ResponseEntity<Object> createBoard(@RequestPart("board") @Valid BoardRequest boardRequest,
                                               @RequestPart(value = "images", required = false) List<MultipartFile> images,
                                               HttpSession session) {
         boardService.create(boardRequest, images, session);
@@ -33,7 +34,7 @@ public class BoardController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> modifyBoard(@PathVariable Long id,
-                                              @RequestPart("board") BoardRequest boardRequest,
+                                              @RequestPart("board") @Valid BoardRequest boardRequest,
                                               @RequestPart(value = "images", required = false) List<MultipartFile> images,
                                               HttpSession httpSession) {
         boardService.modify(id, boardRequest, images, httpSession);
