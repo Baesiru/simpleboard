@@ -4,7 +4,6 @@ import com.mycompany.simpleboard.config.exception.board.BoardErrorCode;
 import com.mycompany.simpleboard.config.exception.board.BoardNotFoundException;
 import com.mycompany.simpleboard.config.exception.user.LoginFailException;
 import com.mycompany.simpleboard.config.exception.user.UserErrorCode;
-import com.mycompany.simpleboard.config.interceptor.Auth;
 import com.mycompany.simpleboard.dto.board.BoardRequest;
 import com.mycompany.simpleboard.dto.board.BoardResponse;
 import com.mycompany.simpleboard.dto.board.PageResponse;
@@ -39,10 +38,9 @@ public class BoardService {
     @Transactional
     public void create(BoardRequest boardRequest, List<MultipartFile> images, HttpSession httpSession) {
         Board board = modelMapper.map(boardRequest, Board.class);
-        String username = httpSession.getAttribute("username").toString();
         board.setCreatedAt(LocalDateTime.now());
         board.setStatus(BoardStatus.CREATED);
-        board.setUsername(username);
+        board.setUsername(getUsername(httpSession));
         Board saved = boardRepository.save(board);
         if (images != null && images.size() > 0) {
             List<Image> newImages = imageService.storeFiles(images, saved.getId());
@@ -55,10 +53,7 @@ public class BoardService {
         if (board == null || board.getStatus().equals(BoardStatus.DELETED)) {
             throw new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND);
         }
-        String username = (String) httpSession.getAttribute("username");
-        if (!board.getUsername().equals(username)) {
-            throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
-        }
+        checkUsername(httpSession, board);
         board.setTitle(boardRequest.getTitle());
         board.setContent(boardRequest.getContent());
         board.setStatus(BoardStatus.MODIFIED);
@@ -72,10 +67,7 @@ public class BoardService {
         if (board == null || board.getStatus().equals(BoardStatus.DELETED)) {
             throw new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND);
         }
-        String username = (String) httpSession.getAttribute("username");
-        if (!board.getUsername().equals(username)) {
-            throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
-        }
+        checkUsername(httpSession, board);
         board.setStatus(BoardStatus.DELETED);
         board.setDeletedAt(LocalDateTime.now());
         boardRepository.save(board);
@@ -117,6 +109,19 @@ public class BoardService {
     public Page<PageResponse> findLikeUsername(String username, Integer page) {
         Page<Board> boards = boardRepository.findByUsernameContainsAndStatusNot(username, BoardStatus.DELETED, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id")));
         return boards.map(board -> modelMapper.map(board, PageResponse.class));
+    }
+
+    // 아이디 추출 로직 분리
+    public String getUsername(HttpSession httpSession) {
+        return httpSession.getAttribute("username").toString();
+    }
+
+    // 아이디 검증 로직 분리
+    public void checkUsername(HttpSession httpSession, Board board) {
+        String username = getUsername(httpSession);
+        if (!board.getUsername().equals(username)) {
+            throw new LoginFailException(UserErrorCode.USER_NOT_MATCHED);
+        }
     }
 
 

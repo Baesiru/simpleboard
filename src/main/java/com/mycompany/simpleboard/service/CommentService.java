@@ -1,6 +1,5 @@
 package com.mycompany.simpleboard.service;
 
-import com.mycompany.simpleboard.config.exception.ErrorCode;
 import com.mycompany.simpleboard.config.exception.board.BoardErrorCode;
 import com.mycompany.simpleboard.config.exception.board.BoardNotFoundException;
 import com.mycompany.simpleboard.config.exception.comment.CommentErrorCode;
@@ -9,7 +8,6 @@ import com.mycompany.simpleboard.config.exception.user.LoginFailException;
 import com.mycompany.simpleboard.config.exception.user.UserErrorCode;
 import com.mycompany.simpleboard.dto.comment.CommentRequest;
 import com.mycompany.simpleboard.dto.comment.CommentResponse;
-import com.mycompany.simpleboard.entity.Board;
 import com.mycompany.simpleboard.entity.Comment;
 import com.mycompany.simpleboard.entity.enums.BoardStatus;
 import com.mycompany.simpleboard.entity.enums.CommentStatus;
@@ -18,7 +16,6 @@ import com.mycompany.simpleboard.repository.CommentRepository;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
