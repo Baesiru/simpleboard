@@ -1,32 +1,32 @@
 package com.mycompany.simpleboard.config.exception.user;
 
-import com.mycompany.simpleboard.config.exception.ErrorCodeImfl;
+import com.mycompany.simpleboard.config.exception.ErrorCode;
 
 public class LoginFailException extends RuntimeException {
-    private final ErrorCodeImfl errorCodeImfl;
+    private final ErrorCode errorCode;
     private final String description;
 
-    public LoginFailException(ErrorCodeImfl errorCodeImfl) {
-        super(errorCodeImfl.getDescription());
-        this.errorCodeImfl = errorCodeImfl;
-        this.description = errorCodeImfl.getDescription();
+    public LoginFailException(ErrorCode errorCode) {
+        super(errorCode.getDescription());
+        this.errorCode = errorCode;
+        this.description = errorCode.getDescription();
     }
 
-    public LoginFailException(ErrorCodeImfl errorCodeImfl, String errorDescription) {
-        this.errorCodeImfl = errorCodeImfl;
+    public LoginFailException(ErrorCode errorCode, String errorDescription) {
+        this.errorCode = errorCode;
         this.description = errorDescription;
     }
 
-    public LoginFailException(ErrorCodeImfl errorCodeIfs, Throwable throwable) {
+    public LoginFailException(ErrorCode errorCode, Throwable throwable) {
         super(throwable);
-        this.errorCodeImfl = errorCodeIfs;
-        this.description = errorCodeIfs.getDescription();
+        this.errorCode = errorCode;
+        this.description = errorCode.getDescription();
     }
 
-    public LoginFailException(ErrorCodeImfl errorCodeIfs, Throwable throwable,
-                                   String errorDescription) {
+    public LoginFailException(ErrorCode errorCode, Throwable throwable,
+                              String errorDescription) {
         super(throwable);
-        this.errorCodeImfl = errorCodeIfs;
+        this.errorCode = errorCode;
         this.description = errorDescription;
     }
 }

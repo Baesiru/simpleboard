@@ -1,32 +1,32 @@
 package com.mycompany.simpleboard.config.exception.user;
 
-import com.mycompany.simpleboard.config.exception.ErrorCodeImfl;
+import com.mycompany.simpleboard.config.exception.ErrorCode;
 
 public class ExistsUsernameException extends RuntimeException {
-    private final ErrorCodeImfl errorCodeImfl;
+    private final ErrorCode errorCode;
     private final String description;
 
-    public ExistsUsernameException(ErrorCodeImfl errorCodeImfl) {
-        super(errorCodeImfl.getDescription());
-        this.errorCodeImfl = errorCodeImfl;
-        this.description = errorCodeImfl.getDescription();
+    public ExistsUsernameException(ErrorCode errorCode) {
+        super(errorCode.getDescription());
+        this.errorCode = errorCode;
+        this.description = errorCode.getDescription();
     }
 
-    public ExistsUsernameException(ErrorCodeImfl errorCodeImfl, String errorDescription) {
-        this.errorCodeImfl = errorCodeImfl;
+    public ExistsUsernameException(ErrorCode errorCode, String errorDescription) {
+        this.errorCode = errorCode;
         this.description = errorDescription;
     }
 
-    public ExistsUsernameException(ErrorCodeImfl errorCodeIfs, Throwable throwable) {
+    public ExistsUsernameException(ErrorCode errorCode, Throwable throwable) {
         super(throwable);
-        this.errorCodeImfl = errorCodeIfs;
-        this.description = errorCodeIfs.getDescription();
+        this.errorCode = errorCode;
+        this.description = errorCode.getDescription();
     }
 
-    public ExistsUsernameException(ErrorCodeImfl errorCodeIfs, Throwable throwable,
+    public ExistsUsernameException(ErrorCode errorCode, Throwable throwable,
                                    String errorDescription) {
         super(throwable);
-        this.errorCodeImfl = errorCodeIfs;
+        this.errorCode = errorCode;
         this.description = errorDescription;
     }
 }

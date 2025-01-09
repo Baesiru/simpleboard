@@ -1,12 +1,12 @@
 package com.mycompany.simpleboard.config.exception.board;
 
-import com.mycompany.simpleboard.config.exception.ErrorCodeImfl;
+import com.mycompany.simpleboard.config.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum BoardErrorCode implements ErrorCodeImfl {
+public enum BoardErrorCode implements ErrorCode {
     BOARD_NOT_FOUND(404, 1150, "해당 게시글을 찾을 수 없습니다."),
     EXISTS_USER_EMAIL(403, 1151, "이미 존재하는 이메일입니다."),
     EXISTS_USER_NAME(403, 1152, "이미 존재하는 아이디입니다."),
