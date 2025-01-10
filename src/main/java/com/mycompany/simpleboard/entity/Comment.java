@@ -28,10 +28,8 @@ public class Comment {
     private CommentStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parentId")
     private Comment parent;
-    @OneToMany(mappedBy = "parent", fetch=FetchType.LAZY)
-    private List<Comment> children = new ArrayList<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
