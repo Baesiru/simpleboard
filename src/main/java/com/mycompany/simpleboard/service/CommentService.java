@@ -16,11 +16,16 @@ import com.mycompany.simpleboard.repository.CommentRepository;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CommentService {
@@ -57,9 +62,12 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> getComments(Long boardId) {
-        List<Comment> comments = commentRepository.findByBoardIdAndStatusNot(boardId, CommentStatus.DELETED);
-        return comments.stream().map(comment -> modelMapper.map(comment, CommentResponse.class)).toList();
+    public Map<String, Object> getComments(Long boardId, int page) {
+        Page<Comment> comments = commentRepository.findByBoardIdAndStatusNot(boardId, CommentStatus.DELETED, PageRequest.of(page, 100, Sort.by(Sort.Direction.DESC, "id")));
+        Map<String, Object> map = new HashMap<>();
+        map.put("boards", comments.getContent().stream().map(comment -> modelMapper.map(comment, CommentResponse.class)).toList());
+        map.put("page", comments.getTotalPages());
+        return map;
     }
 
     @Transactional

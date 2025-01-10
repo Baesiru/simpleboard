@@ -56,41 +56,25 @@ public class BoardController {
 
     @GetMapping()
     public ResponseEntity<Object> getBoards(@RequestParam Integer page) {
-        Page<PageResponse> boards = boardService.readPage(page);
-        Map<String, Object> map = new HashMap<>();
-        map.put("boards", boards.getContent());
-        map.put("page", boards.getTotalPages());
-
+        Map<String, Object> map = boardService.readPage(page);
         return ResponseEntity.ok().body(map);
     }
 
     @GetMapping("/search-title")
     public ResponseEntity<Object> findBoardsByTitle(@RequestParam String title, @RequestParam Integer page) {
-        Page<PageResponse> boards = boardService.findLikeTitle(title, page);
-        Map<String, Object> map = new HashMap<>();
-        map.put("boards", boards.getContent());
-        map.put("page", boards.getTotalPages());
-
+        Map<String, Object> map = boardService.findLikeTitle(title, page);
         return ResponseEntity.ok().body(map);
     }
 
     @GetMapping("/search-content")
     public ResponseEntity<Object> findBoardsByContent(@RequestParam String content, @RequestParam Integer page) {
-        Page<PageResponse> boards = boardService.findLikeContent(content, page);
-        Map<String, Object> map = new HashMap<>();
-        map.put("boards", boards.getContent());
-        map.put("page", boards.getTotalPages());
-
+        Map<String, Object> map = boardService.findLikeContent(content, page);
         return ResponseEntity.ok().body(map);
     }
 
     @GetMapping("/search-username")
     public ResponseEntity<Object> findBoardsByUsername(@RequestParam String username, @RequestParam Integer page) {
-        Page<PageResponse> boards = boardService.findLikeUsername(username, page);
-        Map<String, Object> map = new HashMap<>();
-        map.put("boards", boards.getContent());
-        map.put("page", boards.getTotalPages());
-
+        Map<String, Object> map = boardService.findLikeUsername(username, page);
         return ResponseEntity.ok().body(map);
     }
 }

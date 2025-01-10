@@ -6,10 +6,13 @@ import com.mycompany.simpleboard.dto.comment.CommentResponse;
 import com.mycompany.simpleboard.service.CommentService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/comment")
@@ -26,9 +29,9 @@ public class CommentController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<Object> getComments(@PathVariable Long boardId){
-        List<CommentResponse> comments = commentService.getComments(boardId);
-        return ResponseEntity.ok().body(comments);
+    public ResponseEntity<Object> getComments(@PathVariable Long boardId, @RequestParam int page){
+        Map<String, Object> map = commentService.getComments(boardId, page);
+        return ResponseEntity.ok().body(map);
     }
 
     @PatchMapping("/{id}")

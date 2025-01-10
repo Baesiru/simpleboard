@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -88,27 +90,39 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PageResponse> readPage(Integer page) {
+    public Map<String, Object> readPage(Integer page) {
         Page<Board> boards = boardRepository.findAll(PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id")));
-        return boards.map(board -> modelMapper.map(board, PageResponse.class));
+        Map<String, Object> map = new HashMap<>();
+        map.put("boards", boards.getContent().stream().map(board -> modelMapper.map(board, BoardResponse.class)).toList());
+        map.put("page", boards.getTotalPages());
+        return map;
     }
 
     @Transactional(readOnly = true)
-    public Page<PageResponse> findLikeTitle(String title, Integer page) {
+    public Map<String, Object> findLikeTitle(String title, Integer page) {
         Page<Board> boards = boardRepository.findByTitleContainsAndStatusNot(title, BoardStatus.DELETED, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id")));
-        return boards.map(board -> modelMapper.map(board, PageResponse.class));
+        Map<String, Object> map = new HashMap<>();
+        map.put("boards", boards.getContent().stream().map(board -> modelMapper.map(board, BoardResponse.class)).toList());
+        map.put("page", boards.getTotalPages());
+        return map;
     }
 
     @Transactional(readOnly = true)
-    public Page<PageResponse> findLikeContent(String content, Integer page) {
+    public Map<String, Object> findLikeContent(String content, Integer page) {
         Page<Board> boards = boardRepository.findByContentContainsAndStatusNot(content, BoardStatus.DELETED, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id")));
-        return boards.map(board -> modelMapper.map(board, PageResponse.class));
+        Map<String, Object> map = new HashMap<>();
+        map.put("boards", boards.getContent().stream().map(board -> modelMapper.map(board, BoardResponse.class)).toList());
+        map.put("page", boards.getTotalPages());
+        return map;
     }
 
     @Transactional(readOnly = true)
-    public Page<PageResponse> findLikeUsername(String username, Integer page) {
+    public Map<String, Object> findLikeUsername(String username, Integer page) {
         Page<Board> boards = boardRepository.findByUsernameContainsAndStatusNot(username, BoardStatus.DELETED, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id")));
-        return boards.map(board -> modelMapper.map(board, PageResponse.class));
+        Map<String, Object> map = new HashMap<>();
+        map.put("boards", boards.getContent().stream().map(board -> modelMapper.map(board, BoardResponse.class)).toList());
+        map.put("page", boards.getTotalPages());
+        return map;
     }
 
     // 아이디 추출 로직 분리
