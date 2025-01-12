@@ -1,9 +1,6 @@
 package com.mycompany.simpleboard.config.exception;
 
-import com.mycompany.simpleboard.config.exception.user.ExistsEmailException;
-import com.mycompany.simpleboard.config.exception.user.ExistsUsernameException;
-import com.mycompany.simpleboard.config.exception.user.LoginFailException;
-import com.mycompany.simpleboard.config.exception.user.UsernameNotFoundException;
+import com.mycompany.simpleboard.config.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,5 +26,10 @@ public class UserExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Object> usernameNotFoundException(UsernameNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SamePasswordException.class)
+    public ResponseEntity<Object> samePasswordException(SamePasswordException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

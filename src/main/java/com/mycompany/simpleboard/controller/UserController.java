@@ -3,6 +3,9 @@ package com.mycompany.simpleboard.controller;
 import com.mycompany.simpleboard.config.interceptor.Auth;
 import com.mycompany.simpleboard.dto.user.duplication.DuplicationEmailRequest;
 import com.mycompany.simpleboard.dto.user.duplication.DuplicationUsernameRequest;
+import com.mycompany.simpleboard.dto.user.management.ChangePasswordRequest;
+import com.mycompany.simpleboard.dto.user.management.FindUsernameRequest;
+import com.mycompany.simpleboard.dto.user.management.FindUsernameResponse;
 import com.mycompany.simpleboard.dto.user.login.LoginRequest;
 import com.mycompany.simpleboard.dto.user.register.RegisterRequest;
 import com.mycompany.simpleboard.service.UserService;
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private HttpSession httpSession;
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterRequest registerRequest){
@@ -61,9 +66,17 @@ public class UserController {
         return ResponseEntity.ok().body("정상적으로 로그아웃 되었습니다.");
     }
 
-    @GetMapping("/test")
-    @Auth
-    public ResponseEntity<Object> test(){
-        return ResponseEntity.ok().body("테스트");
+    @PostMapping("/find/username")
+    public ResponseEntity<Object> findUsername(@RequestBody @Valid FindUsernameRequest findUsernameRequest){
+        FindUsernameResponse findUsernameResponse = userService.findUsername(findUsernameRequest);
+        return ResponseEntity.ok().body(findUsernameResponse);
     }
+
+    @PostMapping("/change/password")
+    @Auth
+    public ResponseEntity<Object> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        userService.changePassword(changePasswordRequest, httpSession);
+        return ResponseEntity.ok().body("정상적으로 비밀번호 변경이 완료되었습니다.");
+    }
+
 }

@@ -1,10 +1,14 @@
 package com.mycompany.simpleboard.service;
 
 import com.mycompany.simpleboard.config.exception.user.*;
+import com.mycompany.simpleboard.dto.user.management.ChangePasswordRequest;
+import com.mycompany.simpleboard.dto.user.management.FindUsernameRequest;
+import com.mycompany.simpleboard.dto.user.management.FindUsernameResponse;
 import com.mycompany.simpleboard.dto.user.login.LoginRequest;
 import com.mycompany.simpleboard.dto.user.register.RegisterRequest;
 import com.mycompany.simpleboard.entity.User;
 import com.mycompany.simpleboard.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,5 +64,40 @@ public class UserService {
 
         user.setLastLoginAt(LocalDateTime.now());
         return username;
+    }
+
+    @Transactional(readOnly = true)
+    public FindUsernameResponse findUsername(FindUsernameRequest findUsernameRequest) {
+        String email = findUsernameRequest.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND));
+        FindUsernameResponse findUsernameResponse = new FindUsernameResponse();
+        findUsernameResponse.setUsername(user.getUsername());
+        return findUsernameResponse;
+    }
+
+    @Transactional
+    public void changePassword(ChangePasswordRequest changePasswordRequest, HttpSession httpSession) {
+        String username = httpSession.getAttribute("username").toString();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND));
+        String currPassword = changePasswordRequest.getCurrPassword();
+        String changedPassword = changePasswordRequest.getChangedPassword();
+
+        // 저장된 비밀번호와 입력한 현재 비밀번호가 다를 때
+        if (!passwordEncoder.matches(currPassword, user.getPassword())) {
+            throw new LoginFailException(UserErrorCode.LOGIN_FAIL);
+        }
+        // 입력한 현재 비밀번호와 바꿀 비밀번호가 같을 때
+        if (currPassword.equals(changedPassword)) {
+            throw new SamePasswordException(UserErrorCode.SAME_PASSWORD_ERROR);
+        }
+        // 저장된 비밀번호와 바꿀 비밀번호가 같을 때
+        if (passwordEncoder.matches(changedPassword, user.getPassword())) {
+            throw new SamePasswordException(UserErrorCode.SAME_PASSWORD_ERROR);
+        }
+
+        user.setPassword(passwordEncoder.encode(changedPassword));
+        userRepository.save(user);
     }
 }
