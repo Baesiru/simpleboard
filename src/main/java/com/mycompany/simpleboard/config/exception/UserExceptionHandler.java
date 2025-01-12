@@ -32,4 +32,9 @@ public class UserExceptionHandler {
     public ResponseEntity<Object> samePasswordException(SamePasswordException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+
+    @ExceptionHandler(CodeNotEqualsException.class)
+    public ResponseEntity<Object> codeNotEqualsException(CodeNotEqualsException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 }

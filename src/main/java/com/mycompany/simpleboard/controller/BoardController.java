@@ -3,17 +3,15 @@ package com.mycompany.simpleboard.controller;
 import com.mycompany.simpleboard.config.interceptor.Auth;
 import com.mycompany.simpleboard.dto.board.BoardRequest;
 import com.mycompany.simpleboard.dto.board.BoardResponse;
-import com.mycompany.simpleboard.dto.board.PageResponse;
 import com.mycompany.simpleboard.service.BoardService;
+import com.mycompany.simpleboard.service.RedisService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,4 +75,5 @@ public class BoardController {
         Map<String, Object> map = boardService.findLikeUsername(username, page);
         return ResponseEntity.ok().body(map);
     }
+
 }

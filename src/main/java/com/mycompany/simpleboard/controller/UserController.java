@@ -3,9 +3,7 @@ package com.mycompany.simpleboard.controller;
 import com.mycompany.simpleboard.config.interceptor.Auth;
 import com.mycompany.simpleboard.dto.user.duplication.DuplicationEmailRequest;
 import com.mycompany.simpleboard.dto.user.duplication.DuplicationUsernameRequest;
-import com.mycompany.simpleboard.dto.user.management.ChangePasswordRequest;
-import com.mycompany.simpleboard.dto.user.management.FindUsernameRequest;
-import com.mycompany.simpleboard.dto.user.management.FindUsernameResponse;
+import com.mycompany.simpleboard.dto.user.management.*;
 import com.mycompany.simpleboard.dto.user.login.LoginRequest;
 import com.mycompany.simpleboard.dto.user.register.RegisterRequest;
 import com.mycompany.simpleboard.service.UserService;
@@ -77,6 +75,24 @@ public class UserController {
     public ResponseEntity<Object> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         userService.changePassword(changePasswordRequest, httpSession);
         return ResponseEntity.ok().body("정상적으로 비밀번호 변경이 완료되었습니다.");
+    }
+
+    @PostMapping("/find/userinfo")
+    public ResponseEntity<Object> findUserInfo(@RequestBody @Valid CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
+        userService.checkUsernameAndEmail(checkUsernameAndEmailRequest);
+        return ResponseEntity.ok().body("아이디와 이메일을 정상적으로 확인했습니다.");
+    }
+
+    @PostMapping("/send/email")
+    public ResponseEntity<Object> sendEmail(@RequestBody @Valid CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
+        userService.sendEmail(checkUsernameAndEmailRequest);
+        return ResponseEntity.ok().body("이메일을 정상적으로 전송하였습니다.");
+    }
+
+    @PostMapping("/check/code")
+    public ResponseEntity<Object> checkCode(@RequestBody @Valid CheckEmailAndCodeRequest checkEmailAndCodeRequest) {
+        userService.checkEmailAndCode(checkEmailAndCodeRequest);
+        return ResponseEntity.ok().body("인증번호가 일치합니다.");
     }
 
 }

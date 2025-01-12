@@ -1,9 +1,7 @@
 package com.mycompany.simpleboard.service;
 
 import com.mycompany.simpleboard.config.exception.user.*;
-import com.mycompany.simpleboard.dto.user.management.ChangePasswordRequest;
-import com.mycompany.simpleboard.dto.user.management.FindUsernameRequest;
-import com.mycompany.simpleboard.dto.user.management.FindUsernameResponse;
+import com.mycompany.simpleboard.dto.user.management.*;
 import com.mycompany.simpleboard.dto.user.login.LoginRequest;
 import com.mycompany.simpleboard.dto.user.register.RegisterRequest;
 import com.mycompany.simpleboard.entity.User;
@@ -11,16 +9,22 @@ import com.mycompany.simpleboard.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -100,4 +104,56 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(changedPassword));
         userRepository.save(user);
     }
+
+    @Transactional(readOnly = true)
+    public void checkUsernameAndEmail(CheckUsernameAndEmailRequest checkUsernameAndEmailRequest){
+        String username = checkUsernameAndEmailRequest.getUsername();
+        String email = checkUsernameAndEmailRequest.getEmail();
+        userRepository.findByUsernameAndEmail(username, email)
+                .orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional
+    public void checkEmailAndCode(CheckEmailAndCodeRequest checkEmailAndCodeRequest) {
+        String email = checkEmailAndCodeRequest.getEmail();
+        String code = checkEmailAndCodeRequest.getCode();
+        String redisCode = redisService.getData(email);
+        if (redisCode.equals(code)) {
+            redisService.deleteData(email);
+        }
+        else {
+            throw new CodeNotEqualsException(UserErrorCode.CODE_NOT_EQUALS);
+        }
+    }
+
+    @Transactional
+    public void sendEmail(CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
+        Random random = new Random();
+        String email = checkUsernameAndEmailRequest.getEmail();
+        String code = String.valueOf(random.nextInt(888888) + 111111);
+
+        emailService.sendMail(email, code);
+        if (redisService.existData(email)) {
+            redisService.deleteData(email);
+            redisService.setDataExpire(email, code, 60 * 5L);
+        } else {
+            redisService.setDataExpire(email, code, 60 * 5L);
+        }
+    }
+
+    @Transactional
+    public void changeNewPassword(ChangeNewPasswordRequest changeNewPasswordRequest) {
+        String username = changeNewPasswordRequest.getUsername();
+        String password = changeNewPasswordRequest.getPassword();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND));
+
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            throw new SamePasswordException(UserErrorCode.SAME_PASSWORD_ERROR);
+        }
+
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+    }
+
 }

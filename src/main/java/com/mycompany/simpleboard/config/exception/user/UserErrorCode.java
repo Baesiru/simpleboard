@@ -13,7 +13,8 @@ public enum UserErrorCode implements ErrorCode {
     LOGIN_FAIL(401, "로그인 정보가 일치하지 않습니다."),
     USER_UNREGISTER_FAIL(500, "회원 탈퇴에 실패했습니다."),
     USER_NOT_MATCHED(401, "작성자와 아이디가 일치하지 않습니다."),
-    SAME_PASSWORD_ERROR(400, "현재 비밀번호와 같은 비밀번호는 사용할 수 없습니다.")
+    SAME_PASSWORD_ERROR(400, "현재 비밀번호와 같은 비밀번호는 사용할 수 없습니다."),
+    CODE_NOT_EQUALS(400, "인증번호가 일치하지 않습니다.")
     ;
 
     private final Integer httpCode;
