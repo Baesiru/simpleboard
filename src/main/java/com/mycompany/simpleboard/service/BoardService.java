@@ -86,6 +86,7 @@ public class BoardService {
         if (images != null && images.size() > 0) {
             boardResponse.setImages(images);
         }
+        board.setViewCount(board.getViewCount() + 1);
         return boardResponse;
     }
 
