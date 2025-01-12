@@ -1,9 +1,6 @@
 package com.mycompany.simpleboard.service;
 
-import com.mycompany.simpleboard.config.exception.user.ExistsEmailException;
-import com.mycompany.simpleboard.config.exception.user.ExistsUsernameException;
-import com.mycompany.simpleboard.config.exception.user.LoginFailException;
-import com.mycompany.simpleboard.config.exception.user.UserErrorCode;
+import com.mycompany.simpleboard.config.exception.user.*;
 import com.mycompany.simpleboard.dto.user.login.LoginRequest;
 import com.mycompany.simpleboard.dto.user.register.RegisterRequest;
 import com.mycompany.simpleboard.entity.User;
@@ -56,7 +53,7 @@ public class UserService {
     public String login(LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND));
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             throw new LoginFailException(UserErrorCode.LOGIN_FAIL);
         }
