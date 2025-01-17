@@ -105,12 +105,38 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional(readOnly = true)
-    public void checkUsernameAndEmail(CheckUsernameAndEmailRequest checkUsernameAndEmailRequest){
+    @Transactional
+    public void checkUserAndSendEmail(CheckUsernameAndEmailRequest checkUsernameAndEmailRequest){
         String username = checkUsernameAndEmailRequest.getUsername();
         String email = checkUsernameAndEmailRequest.getEmail();
+        String code = makeCode();
+        checkUser(username, email);
+        sendEmail(email, code);
+        putCodeInRedis(email, code);
+    }
+
+    @Transactional(readOnly = true)
+    public void checkUser(String username, String email) {
         userRepository.findByUsernameAndEmail(username, email)
                 .orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    public void sendEmail(String email, String code) {
+        emailService.sendMail(email, code);
+    }
+
+    public void putCodeInRedis(String email, String code) {
+        if (redisService.existData(email)) {
+            redisService.deleteData(email);
+            redisService.setDataExpire(email, code, 60 * 5L);
+        } else {
+            redisService.setDataExpire(email, code, 60 * 5L);
+        }
+    }
+
+    public String makeCode(){
+        Random random = new Random();
+        return String.valueOf(random.nextInt(888888) + 111111);
     }
 
     @Transactional
@@ -123,21 +149,6 @@ public class UserService {
         }
         else {
             throw new CodeNotEqualsException(UserErrorCode.CODE_NOT_EQUALS);
-        }
-    }
-
-    @Transactional
-    public void sendEmail(CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
-        Random random = new Random();
-        String email = checkUsernameAndEmailRequest.getEmail();
-        String code = String.valueOf(random.nextInt(888888) + 111111);
-
-        emailService.sendMail(email, code);
-        if (redisService.existData(email)) {
-            redisService.deleteData(email);
-            redisService.setDataExpire(email, code, 60 * 5L);
-        } else {
-            redisService.setDataExpire(email, code, 60 * 5L);
         }
     }
 

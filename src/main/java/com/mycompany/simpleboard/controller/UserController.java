@@ -77,17 +77,12 @@ public class UserController {
         return ResponseEntity.ok().body("정상적으로 비밀번호 변경이 완료되었습니다.");
     }
 
-    @PostMapping("/find/userinfo")
-    public ResponseEntity<Object> findUserInfo(@RequestBody @Valid CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
-        userService.checkUsernameAndEmail(checkUsernameAndEmailRequest);
-        return ResponseEntity.ok().body("아이디와 이메일을 정상적으로 확인했습니다.");
-    }
-
     @PostMapping("/send/email")
-    public ResponseEntity<Object> sendEmail(@RequestBody @Valid CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
-        userService.sendEmail(checkUsernameAndEmailRequest);
+    public ResponseEntity<Object> checkUserAndSendEmail(@RequestBody @Valid CheckUsernameAndEmailRequest checkUsernameAndEmailRequest) {
+        userService.checkUserAndSendEmail(checkUsernameAndEmailRequest);
         return ResponseEntity.ok().body("이메일을 정상적으로 전송하였습니다.");
     }
+
 
     @PostMapping("/check/code")
     public ResponseEntity<Object> checkCode(@RequestBody @Valid CheckEmailAndCodeRequest checkEmailAndCodeRequest) {
