@@ -37,4 +37,10 @@ public class UserExceptionHandler {
     public ResponseEntity<Object> codeNotEqualsException(CodeNotEqualsException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+
+
+    @ExceptionHandler(MailErrorException.class)
+    public ResponseEntity<Object> mailErrorException(MailErrorException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
 }
